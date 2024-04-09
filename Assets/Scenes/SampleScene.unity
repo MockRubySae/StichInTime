@@ -715,6 +715,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundMat: {fileID: 2100000, guid: 006fc09d1a39d3e479c8d7f25a47a961, type: 2}
   preefab: {fileID: 8967957490926308543, guid: 6a78de4082845db4fb0d855ec055673a, type: 3}
+  preFabTree: {fileID: 5030163927502960868, guid: 4bf65801989485846976de4f9048a5e4, type: 3}
 --- !u!1 &1597328168
 GameObject:
   m_ObjectHideFlags: 0

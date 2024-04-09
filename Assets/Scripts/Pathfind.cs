@@ -31,6 +31,7 @@ public class Pathfind : MonoBehaviour
     //   static Texture2D tex;
 
     public GameObject preefab;
+    public GameObject preFabTree;
 
     // Start is called before the first frame update
     void Start()
@@ -38,19 +39,19 @@ public class Pathfind : MonoBehaviour
         string[] mapData = { 
             "****************",
             "*.......*......*",
+            "*...,..........*",
             "*..............*",
-            "*..............*",
-            "*.....****.....*",
-            "*.....*........*",
+            "*.....****...,.*",
+            "*.,...*........*",
             "*.....*........*",
             "*.....*........*",
             "*.....******...*",
             "*.....*........*",
-            "*..............*",
+            "*.,............*",
             "*.....*****....*",
-            "*.....*****....*",
+            "*.....*****.,..*",
             "*..............*",
-            "*..............*",
+            "*.....,........*",
             "****************",
         };
 
@@ -73,6 +74,13 @@ public class Pathfind : MonoBehaviour
                             Instantiate(preefab, new Vector3(x + 0.5f, 1 ,(gridHeight - z - 1 + 0.5f)), Quaternion.identity);
                         
                         //      tex.SetPixel(x, GridHeight-y-1, Color.red);
+                }
+                else if (mapData[z][x] == ',')
+                {
+                    Nodes[gridHeight - z - 1, x].Wall = true;
+
+
+                    Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
                 }
                 else
                     {
