@@ -28,8 +28,8 @@ public class NPC : MonoBehaviour
             Vector2Int newtarget = new Vector2Int();
             do
             {
-                newtarget.x = Random.Range(1, Pathfind.GridWidth - 1);
-                newtarget.y = Random.Range(1, Pathfind.GridHeight - 1);
+                newtarget.x = Random.Range(1, Pathfind.gridWidth - 1);
+                newtarget.y = Random.Range(1, Pathfind.gridHeight - 1);
             } while (Pathfind.GetNode(newtarget).Wall);
 
             Path = Pathfind.FindPath(
@@ -39,9 +39,9 @@ public class NPC : MonoBehaviour
         if (Path.Count != 0)
         {
             Vector3 target = new Vector3(
-                Path[Path.Count - 1].x + Pathfind.CellSize * 0.5f, 
+                Path[Path.Count - 1].x + Pathfind.cellSize * 0.5f, 
                 0.5f, 
-                Path[Path.Count - 1].y + Pathfind.CellSize * 0.5f);
+                Path[Path.Count - 1].y + Pathfind.cellSize * 0.5f);
             GetComponent<Rigidbody>().velocity = (target - transform.position).normalized * 8.0f;
 
             if(Vector3.Distance(transform.position-new Vector3(0,0.5f,0), target)<0.1f)

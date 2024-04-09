@@ -22,13 +22,15 @@ public class Node
 
 public class Pathfind : MonoBehaviour
 {
-    public static int GridWidth = 16;
-    public static int GridHeight = 16;
-    public static float CellSize = 1.0f;
+    public static int gridWidth = 16;
+    public static int gridHeight = 16;
+    public static float cellSize = 1.0f;
 
     public static Node[,] Nodes;
     public Material groundMat;
-    static Texture2D tex;
+    //   static Texture2D tex;
+
+    public GameObject preefab;
 
     // Start is called before the first frame update
     void Start()
@@ -52,42 +54,47 @@ public class Pathfind : MonoBehaviour
             "****************",
         };
 
-        tex = new Texture2D(GridWidth, GridHeight);
-        tex.filterMode = FilterMode.Point;
-        groundMat.SetTexture("_MainTex", tex);
+      //  tex = new Texture2D(GridWidth, GridHeight);
+      //  tex.filterMode = FilterMode.Point;
+      //  groundMat.SetTexture("_MainTex", tex);
 
-        Nodes = new Node[GridHeight, GridWidth];
+        Nodes = new Node[gridHeight, gridWidth];
 
-        for (int y = 0; y < GridHeight; ++y)
+        for (int z = 0; z < gridHeight; ++z)
         {
-            for (int x = 0; x < GridWidth; ++x)
+            for (int x = 0; x < gridWidth; ++x)
             {
-                Nodes[GridHeight-y-1, x] = new Node();
-                if (mapData[y][x] == '*')
+                Nodes[gridHeight - z - 1, x] = new Node();
+                if (mapData[z][x] == '*')
                 {
-                    Nodes[GridHeight-y-1, x].Wall = true;
-                    tex.SetPixel(x, GridHeight-y-1, Color.red);
+                    Nodes[gridHeight - z - 1, x].Wall = true;
+                  
+                       
+                            Instantiate(preefab, new Vector3(x + 0.5f, 1 ,(gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+                        
+                        //      tex.SetPixel(x, GridHeight-y-1, Color.red);
                 }
                 else
-                {
-                    Nodes[GridHeight-y-1, x].Wall = false;
-                    tex.SetPixel(x, GridHeight-y-1, Color.black);
+                    {
+                        Nodes[gridHeight - z - 1, x].Wall = false;
+                        //     tex.SetPixel(x, GridHeight-y-1, Color.black);
+                    }
                 }
-            }
-        }
-        tex.Apply();
+            } 
+  
+      //  tex.Apply();
     }
 
     // Update is called once per frame
     void Update()
     {
-        for (int y = 0; y <= GridHeight; ++y)
+        for (int y = 0; y <= gridHeight; ++y)
         {
-            Debug.DrawLine(new Vector3(0, 0.1f, y), new Vector3(GridWidth, 0.1f, y));
+            Debug.DrawLine(new Vector3(0, 0.1f, y), new Vector3(gridWidth, 0.1f, y));
         }
-        for (int x = 0; x <= GridWidth; ++x)
+        for (int x = 0; x <= gridWidth; ++x)
         {
-            Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, GridHeight));
+            Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, gridHeight));
         }
     }
 
@@ -109,9 +116,9 @@ public class Pathfind : MonoBehaviour
             //new Vector2Int(1, -1)
         };
 
-        for (int y = 0; y < GridHeight; ++y)
+        for (int y = 0; y < gridHeight; ++y)
         {
-            for (int x = 0; x < GridWidth; ++x)
+            for (int x = 0; x < gridWidth; ++x)
             {
                 Nodes[y, x].state = Node.State.None;
                 Nodes[y, x].Parent = new Vector2Int(-1, -1);
