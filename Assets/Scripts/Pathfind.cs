@@ -189,7 +189,7 @@ public class Pathfind : MonoBehaviour
                 {
 
                     adjCoordNode.G = currentNode.G + cost;
-                    adjCoordNode.H = 0;
+                    adjCoordNode.H = Math.Abs(adjCoord.x - end.x) + Math.Abs(adjCoord.y - end.y); ;
                     adjCoordNode.F = adjCoordNode.G + adjCoordNode.H;
                     adjCoordNode.Parent = currentCoord;
                     adjCoordNode.state = Node.State.Open;
