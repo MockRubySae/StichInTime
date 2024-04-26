@@ -51,10 +51,74 @@ public class Pathfind : MonoBehaviour
 
     public Level level;
 
+    public string FilePath;
+
+    public bool startDetroying = false;
     // Start is called before the first frame update
     void Start()
     {
-        string file = File.ReadAllText("C:\\Users\\mockr\\Map.json");
+        startDetroying = false;
+        string[] mapData = {
+            "****************",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "*..............*",
+            "****************",
+        };
+        //  tex = new Texture2D(GridWidth, GridHeight);
+        //  tex.filterMode = FilterMode.Point;
+        //  groundMat.SetTexture("_MainTex", tex);
+       /* for (int z = 0; z < gridHeight; ++z)
+        {
+            for (int x = 0; x < gridWidth; ++x)
+            {
+                Nodes[gridHeight - z - 1, x] = new Node();
+                if (mapData[z][x] == '*')
+                {
+                    Nodes[gridHeight - z - 1, x].Wall = true;
+
+
+                    // Instantiate(preefab, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+
+                    //      tex.SetPixel(x, GridHeight-y-1, Color.red);
+                }
+                else if (mapData[z][x] == '.')
+                {
+                    Nodes[gridHeight - z - 1, x].Wall = false;
+
+
+                    // Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+                }
+            }
+        }*/
+
+    }
+
+    public void ClearMap()
+    {
+        for (int y = 0; y < gridHeight; ++y)
+        {
+            for (int x = 0; x < gridWidth; ++x)
+            {
+                Nodes[y, x].Wall = false;
+            }
+        }
+    }
+    public void LoadMap()
+    {
+
+        string file = File.ReadAllText(FilePath);
         Debug.Log(file);
 
         level = JsonUtility.FromJson<Level>(file);
@@ -62,28 +126,7 @@ public class Pathfind : MonoBehaviour
 
         gridHeight = level.height;
         gridWidth = level.width;
-        string[] mapData = { 
-            "****************",
-            "*..............*",
-            "*..**...*......*",
-            "*...*..........*",
-            "*.*..*.........*",
-            "*..............*",
-            "*.....***......*",
-            "*....*.........*",
-            "*....*..**.....*",
-            "*..*....**.....*",
-            "*........*.....*",
-            "****.....*.*...*",
-            "*.....****.....*",
-            "*..*..*..*.....*",
-            "*........*.....*",
-            "****************",
-        };
 
-        //  tex = new Texture2D(GridWidth, GridHeight);
-        //  tex.filterMode = FilterMode.Point;
-        //  groundMat.SetTexture("_MainTex", tex);
 
         Nodes = new Node[gridHeight, gridWidth];
         for (int i = 0; i < level.layers.Length; ++i)
@@ -121,32 +164,7 @@ public class Pathfind : MonoBehaviour
                 }
             }
         }
-       /* for (int z = 0; z < gridHeight; ++z)
-        {
-            for (int x = 0; x < gridWidth; ++x)
-            {
-                Nodes[gridHeight - z - 1, x] = new Node();
-                if (mapData[z][x] == '*')
-                {
-                    Nodes[gridHeight - z - 1, x].Wall = true;
-
-
-                   // Instantiate(preefab, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
-
-                    //      tex.SetPixel(x, GridHeight-y-1, Color.red);
-                }
-                else if (mapData[z][x] == '.')
-                {
-                    Nodes[gridHeight - z - 1, x].Wall = false;
-
-
-                   // Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
-                }
-            }
-        }*/
-
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -158,6 +176,7 @@ public class Pathfind : MonoBehaviour
         {
             Debug.DrawLine(new Vector3(x, 0.1f, 0), new Vector3(x, 0.1f, gridHeight));
         }
+
     }
 
     public static Node GetNode(Vector2Int pos)
