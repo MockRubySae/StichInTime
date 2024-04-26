@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -90,7 +91,6 @@ public class Pathfind : MonoBehaviour
                 }
             } 
   
-      //  tex.Apply();
     }
 
     // Update is called once per frame
@@ -135,7 +135,79 @@ public class Pathfind : MonoBehaviour
         }
         
         // A* goes here
+        List<Vector2Int> openList = new List<Vector2Int>();
 
+        Vector2Int currentCoord;
+
+        openList.Add(start);
+
+        GetNode(start).state = Node.State.Open;
+        GetNode(start).G = 0;
+
+        while (openList.Count > 0)
+        {
+            Vector2Int lowestFCoord = openList[0];
+            int lowestF = GetNode(lowestFCoord).F;
+            int lowestFIndex = 0;
+            for(int i=1; i<openList.Count; ++i)
+            {
+                if (GetNode(openList[i]).F < lowestF)
+                {
+                    lowestFIndex = i;
+                    lowestFCoord = openList[i];
+                    lowestF = GetNode(lowestFCoord).F;
+                }
+            }
+            currentCoord = lowestFCoord;
+            Node currentNode = GetNode(currentCoord);
+            currentNode.state = Node.State.Closed;
+            openList.RemoveAt(lowestFIndex);
+            for(int i=0;i<directions.Length; ++i)
+            {
+                Vector2Int adjCoord = currentCoord + directions[i];
+                Node adjCoordNode = GetNode(adjCoord);
+                int cost = adjCoordNode.C;
+                if (adjCoordNode.Wall)
+                {
+                    // do nothing
+                }
+                else if(adjCoordNode.state == Node.State.Closed) 
+                { 
+                    // do nothing
+                }
+                else if(adjCoordNode.state == Node.State.Open)
+                {
+                    if(adjCoordNode.G > currentNode.G + cost)
+                    {
+                        adjCoordNode.G = currentNode.G + cost;
+                        adjCoordNode.H = Math.Abs(adjCoord.x - end.x)+ Math.Abs(adjCoord.y - end.y);
+                        adjCoordNode.F = adjCoordNode.G + adjCoordNode.H;
+                        adjCoordNode.Parent = currentCoord;
+                    }
+                }
+                else if(adjCoordNode.state == Node.State.None)
+                {
+
+                    adjCoordNode.G = currentNode.G + cost;
+                    adjCoordNode.H = 0;
+                    adjCoordNode.F = adjCoordNode.G + adjCoordNode.H;
+                    adjCoordNode.Parent = currentCoord;
+                    adjCoordNode.state = Node.State.Open;
+                    openList.Add(adjCoord);
+                }
+            }
+            if(GetNode(end).state == Node.State.Closed)
+            {
+                List<Vector2Int> path = new List<Vector2Int>();
+                Vector2Int backtrsckCoord = end;
+                while(backtrsckCoord.x != -1)
+                {
+                    path.Add(backtrsckCoord);
+                    backtrsckCoord = GetNode(backtrsckCoord).Parent;
+                }
+                return path;
+            }
+        }
         // Return empty path
         return new List<Vector2Int>();
 
