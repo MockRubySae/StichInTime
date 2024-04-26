@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Node
@@ -19,7 +20,21 @@ public class Node
     public Vector2Int Parent = new Vector2Int(-1,-1);   // The node before this one.
     public State state = State.None;    // Current node state. Could be none (not reached yet), Open (possible next node) and Closed (reached the node).
 }
+[Serializable]
+public class Layer
+{
+    public string type;
+    public int[] data;
+}
 
+[Serializable]
+public class Level
+{
+    public int width;
+    public int height;
+    public Layer[] layers;
+
+}
 
 public class Pathfind : MonoBehaviour
 {
@@ -34,35 +49,79 @@ public class Pathfind : MonoBehaviour
     public GameObject preefab;
     public GameObject preFabTree;
 
+    public Level level;
+
     // Start is called before the first frame update
     void Start()
     {
+        string file = File.ReadAllText("C:\\Users\\mockr\\Map.json");
+        Debug.Log(file);
+
+        level = JsonUtility.FromJson<Level>(file);
+        int tilelayer = -1;
+
+        gridHeight = level.height;
+        gridWidth = level.width;
         string[] mapData = { 
             "****************",
-            "*.......*......*",
-            "*...,..........*",
             "*..............*",
-            "*.....****...,.*",
-            "*.,...*........*",
-            "*.....*........*",
-            "*.....*........*",
-            "*.....******...*",
-            "*.....*........*",
-            "*.,............*",
-            "*.....*****....*",
-            "*.....*****.,..*",
+            "*..**...*......*",
+            "*...*..........*",
+            "*.*..*.........*",
             "*..............*",
-            "*.....,........*",
+            "*.....***......*",
+            "*....*.........*",
+            "*....*..**.....*",
+            "*..*....**.....*",
+            "*........*.....*",
+            "****.....*.*...*",
+            "*.....****.....*",
+            "*..*..*..*.....*",
+            "*........*.....*",
             "****************",
         };
 
-      //  tex = new Texture2D(GridWidth, GridHeight);
-      //  tex.filterMode = FilterMode.Point;
-      //  groundMat.SetTexture("_MainTex", tex);
+        //  tex = new Texture2D(GridWidth, GridHeight);
+        //  tex.filterMode = FilterMode.Point;
+        //  groundMat.SetTexture("_MainTex", tex);
 
         Nodes = new Node[gridHeight, gridWidth];
+        for (int i = 0; i < level.layers.Length; ++i)
+        {
+            if (level.layers[i].type == "tilelayer")
+            {
+                tilelayer = i;
+                break;
+            }
+        }
+        if (tilelayer >= 0)
+        {
+            for (int z = 0; z < gridHeight; ++z)
+            {
+                for (int x = 0; x < gridWidth; ++x)
+                {
+                    Nodes[gridHeight - z - 1, x] = new Node();
+                    int index = x + z * gridHeight;
+                    int tile = level.layers[tilelayer].data[index];
+                    if (tile == 34)
+                    {
+                        Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+                        Nodes[gridHeight - z - 1, x].Wall = true;
+                    }
+                    else if (tile == 53)
+                    {
+                        Instantiate(preefab, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+                        Nodes[gridHeight - z - 1, x].Wall = true;
+                    }
+                    else
+                    {
+                        Nodes[gridHeight - z - 1, x].Wall = false;
+                    }
 
-        for (int z = 0; z < gridHeight; ++z)
+                }
+            }
+        }
+       /* for (int z = 0; z < gridHeight; ++z)
         {
             for (int x = 0; x < gridWidth; ++x)
             {
@@ -70,27 +129,22 @@ public class Pathfind : MonoBehaviour
                 if (mapData[z][x] == '*')
                 {
                     Nodes[gridHeight - z - 1, x].Wall = true;
-                  
-                       
-                            Instantiate(preefab, new Vector3(x + 0.5f, 1 ,(gridHeight - z - 1 + 0.5f)), Quaternion.identity);
-                        
-                        //      tex.SetPixel(x, GridHeight-y-1, Color.red);
+
+
+                   // Instantiate(preefab, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+
+                    //      tex.SetPixel(x, GridHeight-y-1, Color.red);
                 }
-                else if (mapData[z][x] == ',')
+                else if (mapData[z][x] == '.')
                 {
-                    Nodes[gridHeight - z - 1, x].Wall = true;
+                    Nodes[gridHeight - z - 1, x].Wall = false;
 
 
-                    Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
+                   // Instantiate(preFabTree, new Vector3(x + 0.5f, 1, (gridHeight - z - 1 + 0.5f)), Quaternion.identity);
                 }
-                else
-                    {
-                        Nodes[gridHeight - z - 1, x].Wall = false;
-                        //     tex.SetPixel(x, GridHeight-y-1, Color.black);
-                    }
-                }
-            } 
-  
+            }
+        }*/
+
     }
 
     // Update is called once per frame
